@@ -1,63 +1,56 @@
-from collections import deque
-
-# Function to perform BFS Search
+# Function to perform BFS search for a target node
 def bfs_search(graph, start, target):
 
-    # Step 1: Create an empty list called visited
+    # STEP 1: Create an empty list to store visited nodes
     visited = []
 
-    # Step 2: Create an empty queue
-    queue = deque()
+    # STEP 2: Create an empty queue
+    queue = []
 
-    # Step 3: Put the start node into the queue
+    # STEP 3: Add the start node to the queue
     queue.append(start)
 
-    # Step 4: Mark the start node as visited
+    # STEP 4: Mark the start node as visited
     visited.append(start)
 
-    # Step 4.1: While the queue is not empty
+    # STEP 4.1: Continue until the queue becomes empty
     while queue:
 
-        # Step 4.1.1: Pop the first node from the queue
-        current_node = queue.popleft()
+        # STEP 4.1.1: Remove the first node from the queue
+        current = queue.pop(0)
 
-        # Step 4.1.2: Print the current node
-        print(current_node, end=" ")
+        # STEP 4.1.2: Print the current node
+        print(current, end=" ")
 
-        # Step 4.1.3: Check if current node is the target
-        if current_node == target:
-            print("\nTarget found!")
+        # Check if the current node is the target node
+        if current == target:
+            print("\nTarget found")
             return
 
-        # Step 4.2: Visit all neighbours
-        for neighbour in graph[current_node]:
+        # STEP 4.2: Get all neighbors of the current node
+        # get(current, []) returns an empty list if the node has no neighbors
+        for neighbor in graph.get(current, []):
 
-            # Step 4.2.1: If neighbour is not visited
-            if neighbour not in visited:
+            # STEP 4.2.1: Check if the neighbor has not been visited
+            if neighbor not in visited:
 
-                # Step 4.2.2: Mark as visited
-                visited.append(neighbour)
+                # STEP 4.2.2: Mark the neighbor as visited
+                visited.append(neighbor)
 
-                # Step 4.2.3: Add to queue
-                queue.append(neighbour)
+                # STEP 4.2.3: Add the neighbor to the back of the queue
+                queue.append(neighbor)
 
-    # Step 5: Target not found
-    print("\nTarget not found!")
+    # STEP 5: If queue becomes empty without finding the target
+    print("\nTarget not found")
 
 
-# Example Graph
-graph = {
-    'A': ['B', 'C'],
-    'B': ['D', 'E'],
-    'C': ['F'],
-    'D': [],
-    'E': ['F'],
-    'F': []
-}
+# Create an empty graph
+graph = {}
 
-# Start and Target Nodes
-start_node = 'A'
-target_node = 'E'
+# Add nodes and their neighbors as per our need
+graph['A'] = ['B', 'C']    # B and C are neighbors of A
+graph['B'] = ['D', 'E']    # D and E are neighbors of B
+graph['C'] = ['F']         # F is a neighbor of C
 
-print("BFS Search Traversal:")
-bfs_search(graph, start_node, target_node)
+# Start BFS from node A and search for target node E
+bfs_search(graph, 'A', 'E')
