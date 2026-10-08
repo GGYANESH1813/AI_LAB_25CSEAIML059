@@ -1,51 +1,68 @@
-import heapq
+# A Star Search Algorithm Implementation 
 
-def a_star(graph, heuristic, start, goal):
-    open_list = []
-    heapq.heappush(open_list, (heuristic[start], 0, start, [start]))
+def get_user_inputs():
+    # 1. Take heuristic values for each node
+    heuristic = {}
+    num_nodes = int(input("Enter total number of nodes: "))
+    print("\nEnter Heuristic values h(n) for each node: ")
+    for i in range(num_nodes):
+        node = input("   Node name: ").strip().upper()
+        h_value = float(input(f"   Heuristic value for {node}: "))
+        heuristic[node] = h_value
 
+    # 2. Take input for graph connections
+    graph = {node: [] for node in heuristic}
+    num_edges = int(input("\nEnter total number of directed edges: "))
+    print("\nEnter each edge in the format:")
+    print("   from_node to_node weight")
+
+    for i in range(num_edges):
+        u, v, w = input(f"   Edge {i+1}: ").strip().split()
+        u = u.upper()
+        v = v.upper()
+        weight = float(w)
+        graph[u].append((v, weight))
+    return graph, heuristic
+
+def a_star_search(graph, heuristic, start, goal):
+    open_list = [(start, 0)]
+    came_from = {}
     g_cost = {start: 0}
 
     while open_list:
-        f, g, current, path = heapq.heappop(open_list)
+        # Select node with minimum f(n) = g(n) + h(n)
+        current = min(open_list, key=lambda x: x[1] + heuristic[x[0]])
+        open_list.remove(current)
+        current_node = current[0]
 
-        if current == goal:
-            return path, g
+        # Goal check and path reconstruction
+        if current_node == goal:
+            path = [goal]
+            while current_node in came_from:
+                current_node = came_from[current_node]
+                path.append(current_node)
+            path.reverse()
+            return path, g_cost[goal]
+        
+        # Neighbor exploration
+        for neighbor, cost in graph.get(current_node, []):
+            new_cost = g_cost[current_node] + cost
+            if neighbor not in g_cost or new_cost < g_cost[neighbor]:
+                g_cost[neighbor] = new_cost
+                came_from[neighbor] = current_node
+                open_list.append((neighbor, new_cost))
 
-        for neighbor, cost in graph[current]:
-            new_g = g + cost
-
-            if neighbor not in g_cost or new_g < g_cost[neighbor]:
-                g_cost[neighbor] = new_g
-                new_f = new_g + heuristic[neighbor]
-
-                heapq.heappush(
-                    open_list,
-                    (new_f, new_g, neighbor, path + [neighbor])
-                )
-
+    # No path found
     return None, float("inf")
 
+# Main program
+graph, heuristic = get_user_inputs()
+start = input("\nEnter start node: ").strip().upper()
+goal = input("Enter goal node: ").strip().upper()
+path, cost = a_star_search(graph, heuristic, start, goal)
 
-graph = {
-    'S': [('A', 1), ('G', 10)],
-    'A': [('B', 2), ('C', 1)],
-    'B': [('D', 5)],
-    'C': [('D', 3), ('G', 4)],
-    'D': [('G', 2)],
-    'G': []
-}
-
-heuristic = {
-    'S': 5,
-    'A': 3,
-    'B': 4,
-    'C': 2,
-    'D': 6,
-    'G': 0
-}
-
-path, cost = a_star(graph, heuristic, 'S', 'G')
-
-print("Optimal Path:", " -> ".join(path))
-print("Total Cost:", cost)
+if path:
+    print("\nOptimal path:", " -> ".join(path))
+    print("Total cost: ", cost)
+else:
+    print("\nNo path found.")
