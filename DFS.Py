@@ -1,63 +1,63 @@
-# Depth First Search (DFS) using User Input
+# Depth First Search (DFS) Algorithm Implementation
 
-def dfs(graph, start_node):
-    visited = []               # List to store visited nodes
-    stack = [start_node]       # Stack initialized with the starting node
+def dfs(graph, start_code, target_node):
+    visited = []
+    stack = [start_code]
 
     while stack:
-        current_node = stack.pop()   # Remove the last node from the stack
-
+        current_node = stack.pop()
         if current_node not in visited:
-            print(f"Exploring Node: {current_node}")
+            print(f"Exploring node : {current_node}")
             visited.append(current_node)
 
-            # Add all unvisited neighbors to the stack
-            # Reverse is used to maintain natural traversal order
-            for neighbor in reversed(graph.get(current_node, [])):
-                if neighbor not in visited:
-                    stack.append(neighbor)
+            # Check if target node is found
+            if current_node == target_node:
+                print(f"\nTarget node '{target_node}' found!")
+                return visited
 
+            for neighbour in graph.get(current_node, []):
+                if neighbour not in visited and neighbour not in stack:
+                    stack.append(neighbour)
+
+    print(f"\nTarget node '{target_node}' not found!")
     return visited
 
 
-# ---------------- User Input Section ----------------
+# -----------User input section----------------
 
-print("========== DFS Graph Creation ==========")
-
+print("---------DFS Graph Traversal with Target Search Program---------")
+print("\n-------Build your graph-------")
 student_graph = {}
 
-# Input the number of edges
-num_edges = int(input("Enter the number of edges (connections): "))
+# ----------Get the total number of connections------------------
 
-# Input each edge
+num_edges = int(input("\nHow many edges (connections) does your graph have : "))
+print("\nEnter each edge separated by a space (e.g., A B) : ")
+
 for i in range(num_edges):
-    print(f"\nEdge {i + 1}")
 
-    u = input("Enter Starting Node: ")
-    v = input("Enter Ending Node: ")
+    # Read the edge and split it into two variables
+    u, v = input(f"Edge {i+1} : ").split()
 
-    # Create empty lists if nodes are not already present
+    # Initialize the lists if the nodes don't exist yet
     if u not in student_graph:
         student_graph[u] = []
-
     if v not in student_graph:
         student_graph[v] = []
 
-    # Since the graph is undirected
+    # Add the connection (Undirected graph)
     student_graph[u].append(v)
     student_graph[v].append(u)
 
-# Display the graph
-print("\nGraph Dictionary:")
-print(student_graph)
+# Get the starting point
+start = input("\nEnter the starting node for DFS : ")
 
-# Input starting node for DFS
-start = input("\nEnter the Starting Node for DFS: ")
+# Get the target node
+target = input("Enter the target node : ")
 
-print("\n========== DFS Traversal ==========")
+print(f"\nYour graph dictionary : {student_graph}")
+print("\nStarting DFS traversal.......\n")
 
-# Perform DFS
-visited_nodes = dfs(student_graph, start)
+visited_nodes = dfs(student_graph, start, target)
 
-# Display visited nodes
-print("\nDFS Traversal Order:", visited_nodes)
+print("\nVisited Nodes :", visited_nodes)
